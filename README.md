@@ -1,59 +1,204 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Intern-Mentor Application 🚀
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern, full-stack **Internship & Mentor Management Platform** built with **Laravel 12**, **Vue 3**, **Inertia.js**, and **Tailwind CSS**. It features real-time messaging powered by **Laravel Reverb**, AI-assisted task management powered by **Gemini AI**, and **Google OAuth** authentication via Laravel Socialite.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🌟 Key Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 👥 Role-Based Portals & Workflows
+- **Admin Dashboard**:
+  - Add, manage, and remove mentors.
+  - Oversee platform access and system administration.
+- **Mentor Workspace**:
+  - Create and assign tasks to specific interns.
+  - **AI Task Generation**: Automatically draft structured task descriptions and titles based on prompt topics.
+  - Review submitted work with status updates (Approved / Needs Revision) and actionable feedback.
+  - View task history and intern progress logs.
+- **Intern Portal**:
+  - View assigned active tasks with status indicators and due dates.
+  - **AI Task Guidance**: Simplify complex task instructions into step-by-step actionable roadmaps.
+  - Submit task deliverables with links and submission notes.
+  - **AI Text Polisher**: Refine chat or submission notes into professional and polite communication.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+### 💬 Real-Time Messaging
+- Integrated **1-on-1 Chat** system between mentors and interns.
+- Built using **Laravel Reverb** and **Laravel Echo** for instant, low-latency WebSocket communication.
+- Instant delivery notifications and message history.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 🤖 AI Assistant Capabilities
+- **Task Auto-Generator**: Empowers mentors to generate complete task assignments from simple prompt topics.
+- **Task Simplifier & Step-by-Step Breakdown**: Helps interns decompose complex instructions into actionable steps.
+- **Tone & Text Polisher**: Elevates communication tone (chat messages & task submissions) to professional standards.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 🔐 Authentication & Security
+- Built-in authentication powered by **Laravel Breeze**.
+- **Google OAuth 2.0 Integration** via Laravel Socialite for seamless single sign-on.
+- Role-based authorization middleware ensuring strict access control across Admin, Mentor, and Intern routes.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 🛠️ Tech Stack
 
-## Contributing
+- **Backend**: PHP 8.2+, [Laravel 12](https://laravel.com), Laravel Breeze, Laravel Socialite, Laravel Reverb, Laravel Horizon, Laravel Sanctum
+- **Frontend**: [Vue 3](https://vuejs.org/), [Inertia.js v2](https://inertiajs.com/), [Vite](https://vitejs.dev/), [Tailwind CSS](https://tailwindcss.com/)
+- **Real-Time / WebSockets**: Laravel Reverb, Laravel Echo, Pusher JS
+- **Database**: SQLite / MySQL / PostgreSQL
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 🚀 Getting Started
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Follow these steps to set up and run the project locally.
 
-## Security Vulnerabilities
+### Prerequisites
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Ensure you have the following installed on your machine:
+- **PHP** >= 8.2
+- **Composer** >= 2.x
+- **Node.js** >= 18.x & **npm**
+- **SQLite** (or MySQL/PostgreSQL)
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 📥 Installation & Setup
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Radha6673/intern-mentor-app.git
+   cd intern-mentor-app
+   ```
+
+2. **Install PHP Dependencies**:
+   ```bash
+   composer install
+   ```
+
+3. **Install Frontend Dependencies**:
+   ```bash
+   npm install
+   ```
+
+4. **Configure Environment Variables**:
+   Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+
+5. **Generate Application Key**:
+   ```bash
+   php artisan key:generate
+   ```
+
+6. **Configure Environment Settings in `.env`**:
+   - **Database**:
+     ```env
+     DB_CONNECTION=sqlite
+     ```
+   - **Google OAuth** (from Google Cloud Console):
+     ```env
+     GOOGLE_CLIENT_ID=your-google-client-id
+     GOOGLE_CLIENT_SECRET=your-google-client-secret
+     GOOGLE_REDIRECT_URL="${APP_URL}/auth/google/callback"
+     ```
+   - **Gemini AI API**:
+     ```env
+     GEMINI_API_KEY=your-gemini-api-key
+     ```
+   - **Laravel Reverb (WebSockets)**:
+     ```env
+     BROADCAST_CONNECTION=reverb
+     REVERB_APP_ID=your-app-id
+     REVERB_APP_KEY=your-app-key
+     REVERB_APP_SECRET=your-app-secret
+     REVERB_HOST="localhost"
+     REVERB_PORT=8080
+     REVERB_SCHEME=http
+     ```
+
+7. **Run Database Migrations & Seeders**:
+   ```bash
+   php artisan migrate --seed
+   ```
+
+---
+
+## 💻 Running the Application
+
+You can start all required services (Laravel Server, Vite Dev Server, Queue Worker, and Reverb WebSocket Server) concurrently with a single command:
+
+```bash
+composer run dev
+```
+
+Alternatively, you can run each service individually in separate terminal sessions:
+
+- **Laravel Web Server**:
+  ```bash
+  php artisan serve
+  ```
+- **Vite Development Server**:
+  ```bash
+  npm run dev
+  ```
+- **Queue Listener**:
+  ```bash
+  php artisan queue:listen
+  ```
+- **Reverb WebSocket Server**:
+  ```bash
+  php artisan reverb:start
+  ```
+
+Once running, access the application at `http://localhost:8000`.
+
+---
+
+## 🧪 Running Tests
+
+Execute the PHPUnit test suite:
+
+```bash
+composer test
+```
+or
+```bash
+php artisan test
+```
+
+---
+
+## 📁 Project Structure
+
+```
+intern-mentor-app/
+├── app/
+│   ├── Http/Controllers/    # Controllers (Admin, Mentor, Intern, Chat, AI)
+│   ├── Models/              # Eloquent Models (User, Task, TaskSubmission, Conversation, Message)
+│   └── Services/            # AiService (Gemini API integration & text processing)
+├── database/
+│   ├── migrations/          # Schema migrations
+│   └── seeders/             # Database seeders
+├── resources/
+│   ├── js/
+│   │   ├── Components/      # Shared Vue components
+│   │   ├── Layouts/         # Inertia application layouts
+│   │   └── Pages/           # Vue page views (Admin, Mentor, Intern, Chat, Auth)
+│   └── css/                 # Tailwind CSS styles
+├── routes/
+│   ├── web.php              # Web application routes & middleware
+│   └── auth.php             # Breeze & OAuth authentication routes
+└── config/                  # Framework configurations (services, broadcast, etc.)
+```
+
+---
+
+## 📄 License
+
+This project is open-sourced software licensed under the [MIT License](LICENSE).
