@@ -1,13 +1,18 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PerformanceReportModal from '@/Components/PerformanceReportModal.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
+import axios from 'axios';
 
 const props = defineProps({
     interns: Array,
 });
 
 const searchQuery = ref('');
+const showReportModal = ref(false);
+const reportData = ref(null);
+const loadingReport = ref(false);
 
 // Computed filtered list of interns based on search query
 const filteredInterns = computed(() => {
@@ -19,6 +24,21 @@ const filteredInterns = computed(() => {
             intern.email.toLowerCase().includes(q)
     );
 });
+
+const openPerformanceReport = async (internId = null) => {
+    showReportModal.value = true;
+    loadingReport.value = true;
+    reportData.value = null;
+    try {
+        const url = internId ? route('reports.performance', internId) : route('reports.performance');
+        const response = await axios.get(url);
+        reportData.value = response.data;
+    } catch (error) {
+        console.error('Failed to load performance report:', error);
+    } finally {
+        loadingReport.value = false;
+    }
+};
 </script>
 
 <template>
@@ -75,6 +95,16 @@ const filteredInterns = computed(() => {
                             <span class="text-xs text-gray-400 block uppercase font-semibold">Total Registered Interns</span>
                             <span class="text-2xl font-extrabold text-indigo-600">{{ interns.length }}</span>
                         </div>
+
+                        <button
+                            @click="openPerformanceReport()"
+                            class="inline-flex items-center px-4 py-2 border border-purple-300 rounded-lg text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 transition shadow-sm"
+                        >
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            Overall Performance Report
+                        </button>
                     </div>
                 </div>
 
@@ -161,12 +191,23 @@ const filteredInterns = computed(() => {
 
                                     <!-- Action -->
                                     <td class="px-6 py-4 text-right whitespace-nowrap text-sm font-medium">
-                                        <Link 
-                                            :href="route('mentor.tasks.index')"
-                                            class="text-indigo-600 hover:text-indigo-900 font-semibold text-xs underline"
-                                        >
-                                            Assign Task
-                                        </Link>
+                                        <div class="flex items-center justify-end space-x-3">
+                                            <button
+                                                @click="openPerformanceReport(intern.id)"
+                                                class="inline-flex items-center px-2.5 py-1.5 border border-indigo-200 rounded-lg text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition shadow-sm"
+                                            >
+                                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                                </svg>
+                                                View Report
+                                            </button>
+                                            <Link 
+                                                :href="route('mentor.tasks.index')"
+                                                class="text-indigo-600 hover:text-indigo-900 font-semibold text-xs underline"
+                                            >
+                                                Assign Task
+                                            </Link>
+                                        </div>
                                     </td>
                                 </tr>
 
@@ -182,5 +223,13 @@ const filteredInterns = computed(() => {
 
             </div>
         </div>
+
+        <!-- Performance Report Modal -->
+        <PerformanceReportModal
+            :show="showReportModal"
+            :reportData="reportData"
+            :loading="loadingReport"
+            @close="showReportModal = false"
+        />
     </AuthenticatedLayout>
 </template>

@@ -23,5 +23,11 @@ class UserRepository implements UserRepositoryInterface
         $user = User::findOrFail($id);
         return $user->delete();
     }
+
+    public function updateUserRole(int $id, string $role): bool
+    {
+        $user = User::findOrFail($id);
+        return $user->update(['role' => $role]);
+    }
 }
 

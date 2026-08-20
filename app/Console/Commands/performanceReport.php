@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 class performanceReport extends Command
 {
 
-    protected $signature = 'app:performance-report {--intern= : Specific Intern User ID}';
+    protected $signature = 'app:performance-report {--intern== : Specific Intern User ID}';
 
     protected $description = 'Generates performance report for interns including task statistics and completion rate.';
 
@@ -19,7 +19,8 @@ class performanceReport extends Command
 
         $query = User::where('role', 'intern')->with('myTasks');
 
-        if ($internId) {
+        if ($internId !== null && $internId !== '') {
+            $internId = ltrim($internId, '=');
             $query->where('id', $internId);
         }
 

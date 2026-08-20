@@ -30,4 +30,13 @@ interface UserRepositoryInterface
      * @return bool
      */
     public function deleteUser(int $id): bool;
+
+    /**
+     * Update user role.
+     *
+     * @param int $id
+     * @param string $role
+     * @return bool
+     */
+    public function updateUserRole(int $id, string $role): bool;
 }

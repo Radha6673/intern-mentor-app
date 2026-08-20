@@ -9,9 +9,11 @@ use App\Http\Controllers\InternTaskController;
 
 
 use App\Http\Controllers\AdminMentorController;
+use App\Http\Controllers\AdminInternController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AiAssistantController;
+use App\Http\Controllers\PerformanceReportController;
 
 Route::get('/', function () {
     return auth()->check() ? redirect()->route('dashboard') : redirect()->route('login');
@@ -41,12 +43,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/ai/polish-text', [AiAssistantController::class, 'polishText'])->name('ai.polish');
     Route::post('/ai/task-assistant', [AiAssistantController::class, 'simplifyTask'])->name('ai.task_assistant');
     Route::post('/ai/generate-task', [AiAssistantController::class, 'generateTask'])->name('ai.generate_task');
+
+    // Performance Report Routes
+    Route::get('/reports/performance/{user?}', [PerformanceReportController::class, 'show'])->name('reports.performance');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/mentors', [AdminMentorController::class, 'index'])->name('mentors.index');
     Route::post('/mentors', [AdminMentorController::class, 'store'])->name('mentors.store');
     Route::delete('/mentors/{user}', [AdminMentorController::class, 'destroy'])->name('mentors.destroy');
+
+    Route::get('/interns', [AdminInternController::class, 'index'])->name('interns.index');
+    Route::post('/interns/{user}/promote', [AdminInternController::class, 'promote'])->name('interns.promote');
 });
 
 require __DIR__ . '/auth.php';
