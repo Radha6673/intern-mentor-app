@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Task;
+use App\Traits\CancellableJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -11,13 +12,18 @@ use Illuminate\Support\Facades\Log;
 
 class CheckOverdueTasksJob implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use CancellableJob, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Execute the job.
      */
     public function handle(): void
     {
+        if ($this->isCancelled()) {
+            Log::warning('CheckOverdueTasksJob execution aborted due to cancel signal.');
+            return;
+        }
+
         Log::info('Checking for overdue pending tasks....');
 
         $overdueTasks = Task::with('intern')
@@ -33,6 +39,11 @@ class CheckOverdueTasksJob implements ShouldQueue
         $dispatchedCount = 0;
 
         foreach ($overdueTasks as $task) {
+            if ($this->isCancelled()) {
+                Log::warning("CheckOverdueTasksJob stopped during iteration after dispatching {$dispatchedCount} jobs.");
+                break;
+            }
+
             if ($task->intern) {
                 SendOverdueTaskNotification::dispatch($task);
                 $dispatchedCount++;

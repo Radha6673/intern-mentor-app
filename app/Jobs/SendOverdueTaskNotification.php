@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Task;
 use App\Notifications\deadlineOverdue;
+use App\Traits\CancellableJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class SendOverdueTaskNotification implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use CancellableJob, InteractsWithQueue, Queueable, SerializesModels;
 
     public Task $task;
 
@@ -43,6 +44,11 @@ class SendOverdueTaskNotification implements ShouldQueue
      */
     public function handle(): void
     {
+        if ($this->isCancelled("task_{$this->task->id}")) {
+            Log::warning("SendOverdueTaskNotification execution aborted for task ID {$this->task->id} due to cancel signal.");
+            return;
+        }
+
         // Reload task to check fresh status
         $this->task->refresh();
 
