@@ -2,8 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Enums\TaskStatus;
 use App\Models\Task;
-use App\Notifications\deadlineOverdue;
+use App\Notifications\DeadlineOverdueNotification;
 use App\Traits\CancellableJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -53,7 +54,7 @@ class SendOverdueTaskNotification implements ShouldQueue
         $this->task->refresh();
 
         // Check if task is still in pending or in_progress status
-        if (!in_array($this->task->status, ['pending', 'in_progress'])) {
+        if (!in_array($this->task->status, TaskStatus::pendingWorkValues())) {
             Log::info("Skipping overdue notification for task ID {$this->task->id}: status is '{$this->task->status}'.");
             return;
         }
@@ -61,11 +62,10 @@ class SendOverdueTaskNotification implements ShouldQueue
         $intern = $this->task->intern;
 
         if ($intern) {
-            $intern->notify(new deadlineOverdue($this->task));
+            $intern->notify(new DeadlineOverdueNotification($this->task));
             Log::info("Queued overdue notification sent to intern ID {$intern->id} ({$intern->email}) for task '{$this->task->title}' (ID: {$this->task->id}).");
         } else {
             Log::warning("Task ID {$this->task->id} has no assigned intern. Skipping overdue alert.");
         }
     }
 }
-

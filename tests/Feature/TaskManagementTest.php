@@ -117,7 +117,7 @@ class TaskManagementTest extends TestCase
 
         \Illuminate\Support\Facades\Notification::assertSentTo(
             $intern,
-            \App\Notifications\deadlineOverdue::class
+            \App\Notifications\DeadlineOverdueNotification::class
         );
     }
 

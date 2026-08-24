@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Enums\TaskStatus;
 use App\Models\Task;
 use App\Models\TaskSubmission;
 use App\Repositories\Contracts\TaskRepositoryInterface;
@@ -12,9 +13,7 @@ class TaskRepository implements TaskRepositoryInterface
     public function getTasksForMentor(int $mentorId): Collection
     {
         return Task::with([
-            'intern' => function ($query) {
-                $query->select('id', 'name', 'email');
-            },
+            'intern' => fn($query) => $query->select('id', 'name', 'email'),
             'submission'
         ])
             ->where('mentor_id', $mentorId)
@@ -25,9 +24,7 @@ class TaskRepository implements TaskRepositoryInterface
     public function getTasksForIntern(int $internId): Collection
     {
         return Task::with([
-            'mentor' => function ($query) {
-                $query->select('id', 'name');
-            },
+            'mentor' => fn($query) => $query->select('id', 'name'),
             'submission'
         ])
             ->where('intern_id', $internId)
@@ -52,14 +49,15 @@ class TaskRepository implements TaskRepositoryInterface
             ]
         );
 
-        $task->update(['status' => 'submitted']);
+        $task->update(['status' => TaskStatus::SUBMITTED->value]);
 
         return $submission;
     }
 
     public function reviewTask(Task $task, string $status, ?string $feedback = null): Task
     {
-        $task->update(['status' => $status]);
+        $normalizedStatus = TaskStatus::normalize($status);
+        $task->update(['status' => $normalizedStatus]);
 
         if ($task->submission) {
             $task->submission->update(['feedback' => $feedback]);

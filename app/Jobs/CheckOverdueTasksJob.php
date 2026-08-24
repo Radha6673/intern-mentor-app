@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\TaskStatus;
 use App\Models\Task;
 use App\Traits\CancellableJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -28,7 +29,7 @@ class CheckOverdueTasksJob implements ShouldQueue
 
         $overdueTasks = Task::with('intern')
             ->where('deadline', '<', now())
-            ->whereIn('status', ['pending', 'in_progress'])
+            ->whereIn('status', TaskStatus::pendingWorkValues())
             ->get();
 
         if ($overdueTasks->isEmpty()) {

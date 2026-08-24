@@ -2,40 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\SendOverdueTaskNotification;
-use App\Repositories\Contracts\TaskRepositoryInterface;
-use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Enums\UserRole;
 use App\Models\Task;
 use App\Models\User;
+use App\Repositories\Contracts\TaskRepositoryInterface;
+use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Services\TaskService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class TaskController extends Controller
 {
     public function __construct(
         protected TaskRepositoryInterface $taskRepository,
-        protected UserRepositoryInterface $userRepository
+        protected UserRepositoryInterface $userRepository,
+        protected TaskService $taskService
     ) {}
 
-    public function index()
+    public function index(): Response|RedirectResponse
     {
         $user = Auth::user();
-        if ($user->role !== 'mentor') {
+        if ($user->role !== UserRole::MENTOR->value) {
             return redirect()->route('dashboard')->with('error', 'Unauthorized access.');
         }
 
-        $interns = $this->userRepository->getUsersByRole('intern');
+        $interns = $this->userRepository->getUsersByRole(UserRole::INTERN->value);
         $tasks = $this->taskRepository->getTasksForMentor($user->id);
 
         return Inertia::render('mentor/Task', ['interns' => $interns, 'tasks' => $tasks]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $user = Auth::user();
-        if ($user->role !== 'mentor') {
+        if ($user->role !== UserRole::MENTOR->value) {
             return redirect()->route('dashboard')->with('error', 'Unauthorized access.');
         }
 
@@ -46,32 +49,15 @@ class TaskController extends Controller
             'deadline' => 'nullable|date',
         ]);
 
-        $task = $this->taskRepository->createTask([
-            'mentor_id' => $user->id,
-            'intern_id' => $request->intern_id,
-            'title' => $request->title,
-            'description' => $request->description,
-            'deadline' => $request->deadline,
-            'status' => 'pending',
-        ]);
-
-        // Invalidate Redis dashboard cache for Mentor & Intern
-        Cache::forget("dashboard_stats_" . $user->id);
-        Cache::forget("dashboard_recent_" . $user->id);
-        Cache::forget("dashboard_stats_" . $request->intern_id);
-        Cache::forget("dashboard_recent_" . $request->intern_id);
-
-        if ($task->deadline) {
-            SendOverdueTaskNotification::dispatch($task)->delay($task->deadline);
-        }
+        $this->taskService->createTask($user->id, $request->only(['intern_id', 'title', 'description', 'deadline']));
 
         return back()->with('success', 'Task created successfully.');
     }
 
-    public function review(Request $request, Task $task)
+    public function review(Request $request, Task $task): RedirectResponse
     {
         $user = Auth::user();
-        if ($user->role !== 'mentor' || $task->mentor_id !== $user->id) {
+        if ($user->role !== UserRole::MENTOR->value || $task->mentor_id !== $user->id) {
             return back()->with('error', 'Unauthorized access.');
         }
 
@@ -80,42 +66,26 @@ class TaskController extends Controller
             'feedback' => 'nullable|string',
         ]);
 
-        $status = $request->status === 'rejected' ? 'reject' : $request->status;
-
-        $this->taskRepository->reviewTask($task, $status, $request->feedback);
-
-        // Invalidate Redis dashboard cache for Mentor & Intern
-        Cache::forget("dashboard_stats_" . $task->mentor_id);
-        Cache::forget("dashboard_recent_" . $task->mentor_id);
-        Cache::forget("dashboard_stats_" . $task->intern_id);
-        Cache::forget("dashboard_recent_" . $task->intern_id);
+        $this->taskService->reviewTask($task, $request->status, $request->feedback);
 
         return back()->with('success', 'Task solution reviewed successfully.');
     }
 
-    public function internsList()
+    public function internsList(): Response|RedirectResponse
     {
         $user = Auth::user();
-        if ($user->role !== 'mentor') {
+        if ($user->role !== UserRole::MENTOR->value) {
             return redirect()->route('dashboard')->with('error', 'Unauthorized access.');
         }
 
-        $interns = User::where('role', 'intern')
+        $interns = User::where('role', UserRole::INTERN->value)
             ->select('id', 'name', 'email', 'created_at')
             ->withCount([
                 'myTasks as total_tasks',
-                'myTasks as pending_tasks' => function ($query) {
-                    $query->where('status', 'pending');
-                },
-                'myTasks as submitted_tasks' => function ($query) {
-                    $query->where('status', 'submitted');
-                },
-                'myTasks as approved_tasks' => function ($query) {
-                    $query->where('status', 'approved');
-                },
-                'myTasks as rejected_tasks' => function ($query) {
-                    $query->whereIn('status', ['reject', 'rejected']);
-                },
+                'myTasks as pending_tasks' => fn($q) => $q->where('status', 'pending'),
+                'myTasks as submitted_tasks' => fn($q) => $q->where('status', 'submitted'),
+                'myTasks as approved_tasks' => fn($q) => $q->where('status', 'approved'),
+                'myTasks as rejected_tasks' => fn($q) => $q->whereIn('status', ['reject', 'rejected']),
             ])
             ->latest()
             ->get();
@@ -123,10 +93,10 @@ class TaskController extends Controller
         return Inertia::render('mentor/Interns', ['interns' => $interns]);
     }
 
-    public function history()
+    public function history(): Response|RedirectResponse
     {
         $user = Auth::user();
-        if ($user->role !== 'mentor') {
+        if ($user->role !== UserRole::MENTOR->value) {
             return redirect()->route('dashboard')->with('error', 'Unauthorized access.');
         }
 
@@ -135,4 +105,3 @@ class TaskController extends Controller
         return Inertia::render('mentor/TaskHistory', ['tasks' => $tasks]);
     }
 }
-

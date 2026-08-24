@@ -253,7 +253,9 @@ const roleBadgeClass = computed(() => {
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                                 </svg>
-                            </div>
+                            </div>  
+                             
+                               
                             <h4 class="font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">Assign New Task</h4>
                             <p class="text-xs text-gray-500 mt-1">Create new task assignments for interns with deadline.</p>
                         </Link>
