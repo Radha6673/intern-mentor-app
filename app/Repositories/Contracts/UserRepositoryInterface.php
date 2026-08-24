@@ -2,10 +2,19 @@
 
 namespace App\Repositories\Contracts;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 
 interface UserRepositoryInterface
 {
+    /**
+     * Get relevant members for the given authenticated user based on role.
+     *
+     * @param User $currentUser
+     * @return Collection
+     */
+    public function getMembersForUser(User $currentUser): Collection;
+
     /**
      * Get users filtering by their role.
      *
