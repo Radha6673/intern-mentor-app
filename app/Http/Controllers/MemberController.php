@@ -12,7 +12,8 @@ class MemberController extends Controller
 {
     public function __construct(
         protected UserRepositoryInterface $userRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Display member list based on the authenticated user's role.

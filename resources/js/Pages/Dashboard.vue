@@ -6,9 +6,25 @@ import { computed } from 'vue';
 const props = defineProps({
     stats: Object,
     recentData: Object,
+    members: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const user = computed(() => usePage().props.auth.user);
+
+const membersSectionTitle = computed(() => {
+    if (user.value.role === 'intern') return 'My Mentors';
+    if (user.value.role === 'mentor') return 'My Interns';
+    return 'System Members Directory';
+});
+
+const membersSectionSubtitle = computed(() => {
+    if (user.value.role === 'intern') return 'Quick access to your assigned mentors for guidance & chat.';
+    if (user.value.role === 'mentor') return 'Quick access to your assigned interns & communication.';
+    return 'Directory of all active mentors and interns.';
+});
 
 // Dynamic Role Badge Colors
 const roleBadgeClass = computed(() => {
@@ -63,25 +79,28 @@ const roleBadgeClass = computed(() => {
                         </div>
 
                         <!-- Quick Navigation Action in Hero -->
-                        <div v-if="user.role === 'admin'" class="flex flex-wrap gap-3 w-full md:w-auto">
+                        <div class="flex flex-wrap gap-3 w-full md:w-auto">
+                            <!-- Role-based Members Directory Link -->
+                            <Link 
+                                :href="route('members.index')"
+                                class="inline-flex items-center px-4 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all duration-200 shadow-lg shadow-indigo-600/30"
+                            >
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
+                                {{ user.role === 'intern' ? 'My Mentors' : (user.role === 'mentor' ? 'My Interns' : 'Members Directory') }}
+                            </Link>
+
                             <!-- Admin Quick Action -->
                             <Link 
+                                v-if="user.role === 'admin'"
                                 :href="route('admin.mentors.index')"
-                                class="inline-flex items-center px-4 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all duration-200 shadow-lg shadow-indigo-600/30"
+                                class="inline-flex items-center px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all duration-200 shadow-lg shadow-emerald-600/30"
                             >
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                                 </svg>
                                 Manage Mentors
-                            </Link>
-                            <Link 
-                                :href="route('admin.interns.index')"
-                                class="inline-flex items-center px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all duration-200 shadow-lg shadow-emerald-600/30"
-                            >
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                </svg>
-                                Manage Interns
                             </Link>
                         </div>
                     </div>
@@ -270,14 +289,14 @@ const roleBadgeClass = computed(() => {
                             <p class="text-xs text-gray-500 mt-1">Review intern solution submissions & approve or reject with feedback.</p>
                         </Link>
 
-                        <Link :href="route('mentor.interns.index')" class="group p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all">
+                        <Link :href="route('members.index')" class="group p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all">
                             <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                 </svg>
                             </div>
                             <h4 class="font-bold text-gray-900 group-hover:text-emerald-600 transition-colors">Interns Directory</h4>
-                            <p class="text-xs text-gray-500 mt-1">View registered interns list and task metrics.</p>
+                            <p class="text-xs text-gray-500 mt-1">View assigned interns list and role members.</p>
                         </Link>
                     </div>
                 </div>

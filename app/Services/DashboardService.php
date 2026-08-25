@@ -6,15 +6,20 @@ use App\Enums\TaskStatus;
 use App\Enums\UserRole;
 use App\Models\Task;
 use App\Models\User;
+use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Support\Facades\Cache;
 
 class DashboardService
 {
+    public function __construct(
+        protected UserRepositoryInterface $userRepository
+    ) {}
+
     /**
-     * Get dashboard stats and recent data for the given user based on their role.
+     * Get dashboard stats, recent data, and role-based members for the given user.
      *
      * @param User $user
-     * @return array{stats: array, recentData: array}
+     * @return array{stats: array, recentData: array, members: \Illuminate\Database\Eloquent\Collection}
      */
     public function getDashboardData(User $user): array
     {
@@ -73,6 +78,7 @@ class DashboardService
         return [
             'stats' => $stats ?? [],
             'recentData' => $recentData ?? [],
+            'members' => $this->userRepository->getMembersForUser($user),
         ];
     }
 }
