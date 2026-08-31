@@ -21,7 +21,12 @@ class SocialAuthController extends Controller
             return redirect()->route('login')->with('error', 'Google OAuth Client ID & Secret missing in .env! Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET.');
         }
 
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')
+            ->with([
+                'prompt' => 'select_account consent',
+                'access_type' => 'offline',
+            ])
+            ->redirect();
     }
 
     /**
@@ -42,7 +47,6 @@ class SocialAuthController extends Controller
                 $user->update([
                     'google_id' => $user->google_id ?? $googleUser->getId(),
                     'avatar' => $googleUser->getAvatar(),
-                    'email_verified_at' => $user->email_verified_at ?? now(),
                 ]);
             } else {
                 // Create new user with Google account details
@@ -53,8 +57,11 @@ class SocialAuthController extends Controller
                     'avatar' => $googleUser->getAvatar(),
                     'role' => 'intern', // Default role for Google OAuth self-signup
                     'password' => Hash::make(Str::random(24)),
-                    'email_verified_at' => now(),
                 ]);
+            }
+
+            if (!$user->hasVerifiedEmail()) {
+                $user->markEmailAsVerified();
             }
 
             Auth::login($user, true);

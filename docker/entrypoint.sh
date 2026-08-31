@@ -13,6 +13,7 @@ chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Create storage symlink if not exists
 php artisan storage:link --force || true
+php artisan config:clear || true
 
 # If arguments are passed, execute them (e.g. php artisan migrate)
 if [ "$#" -gt 0 ]; then

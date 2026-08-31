@@ -4,6 +4,18 @@
 FROM node:20-alpine AS frontend
 WORKDIR /app
 
+ARG VITE_REVERB_APP_KEY=ab12cd34ef56gh78ij90
+ARG VITE_REVERB_HOST=localhost
+ARG VITE_REVERB_PORT=8085
+ARG VITE_REVERB_SCHEME=http
+ARG VITE_APP_NAME=Laravel
+
+ENV VITE_REVERB_APP_KEY=$VITE_REVERB_APP_KEY \
+    VITE_REVERB_HOST=$VITE_REVERB_HOST \
+    VITE_REVERB_PORT=$VITE_REVERB_PORT \
+    VITE_REVERB_SCHEME=$VITE_REVERB_SCHEME \
+    VITE_APP_NAME=$VITE_APP_NAME
+
 COPY package*.json ./
 RUN npm install
 
@@ -79,7 +91,7 @@ COPY --from=frontend /app/public/build ./public/build
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose web server port
-EXPOSE 80
+# Expose web server and websocket ports
+EXPOSE 80 8085
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
