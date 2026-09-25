@@ -29,10 +29,14 @@ class TaskController extends Controller
             return redirect()->route('dashboard')->with('error', 'Unauthorized access.');
         }
 
-        $interns = $this->userRepository->getUsersByRole(UserRole::INTERN->value);
+        $interns = $this->userRepository->getUsersByRole(UserRole::INTERN->value, ['id', 'name', 'email', 'department']);
         $tasks = $this->taskRepository->getTasksForMentor($user->id);
 
-        return Inertia::render('mentor/Task', ['interns' => $interns, 'tasks' => $tasks]);
+        return Inertia::render('mentor/Task', [
+            'interns' => $interns,
+            'tasks' => $tasks,
+            'departments' => \App\Enums\Department::options(),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse

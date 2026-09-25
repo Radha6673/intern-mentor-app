@@ -17,18 +17,38 @@ use Inertia\Response;
 class RegisteredUserController extends Controller
 {
     /**
-     * Display the registration view (Redirect to login as self-registration is disabled).
+     * Display the registration view.
      */
-    public function create(): RedirectResponse
+    public function create(): Response
     {
-        return redirect()->route('login');
+        return Inertia::render('Auth/Register');
     }
 
     /**
-     * Handle an incoming registration request (Redirect to login as self-registration is disabled).
+     * Handle an incoming registration request.
+     *
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
-        return redirect()->route('login');
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'intern',
+            'department' => 'web_developer',
+        ]);
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return redirect(route('dashboard', absolute: false));
     }
 }

@@ -34,6 +34,7 @@ class MemberController extends Controller
         return Inertia::render('Members/Index', [
             'members' => $members,
             'userRole' => $user->role,
+            'departments' => \App\Enums\Department::options(),
         ]);
     }
 }

@@ -23,10 +23,25 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'role',
+        'department',
         'google_id',
         'avatar',
         'email_verified_at',
     ];
+
+    protected $appends = [
+        'department_label',
+    ];
+
+    public function getDepartmentLabelAttribute(): ?string
+    {
+        if (empty($this->department)) {
+            return null;
+        }
+
+        return \App\Enums\Department::tryFrom($this->department)?->label() 
+            ?? ucwords(str_replace('_', ' ', $this->department));
+    }
 
     /**
      * The attributes that should be hidden for serialization.

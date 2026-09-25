@@ -12,6 +12,10 @@ defineProps({
     status: {
         type: String,
     },
+    departments: {
+        type: Array,
+        default: () => [],
+    },
 });
 </script>
 
@@ -35,6 +39,7 @@ defineProps({
                     <UpdateProfileInformationForm
                         :must-verify-email="mustVerifyEmail"
                         :status="status"
+                        :departments="departments"
                         class="max-w-xl"
                     />
                 </div>

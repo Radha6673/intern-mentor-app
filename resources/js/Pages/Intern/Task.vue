@@ -49,7 +49,8 @@ const openAiGuideModal = async (task) => {
     try {
         const response = await axios.post(route('ai.task_assistant'), {
             title: task.title,
-            description: task.description
+            description: task.description,
+            department: task.intern?.department || null,
         });
         if (response.data && response.data.data) {
             aiGuideData.value = response.data.data;
@@ -272,7 +273,12 @@ const submitSolution = () => {
                                     ✨
                                 </div>
                                 <div>
-                                    <h3 class="text-base font-bold text-gray-900">AI Task Guide & Suggestions</h3>
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="text-base font-bold text-gray-900">AI Task Guide & Suggestions</h3>
+                                        <span v-if="$page.props.auth.user?.department_label" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                            {{ $page.props.auth.user.department_label }}
+                                        </span>
+                                    </div>
                                     <p class="text-xs text-gray-500 truncate max-w-md">{{ aiGuideModalTask.title }}</p>
                                 </div>
                             </div>

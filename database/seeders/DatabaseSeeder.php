@@ -19,17 +19,32 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Admin User',
                 'password' => Hash::make('password123'),
                 'role' => 'admin',
+                'department' => null,
             ]
         );
 
-        User::firstOrCreate(
-            ['email' => 'mentor@example.com'],
-            [
-                'name' => 'Mentor User',
-                'password' => Hash::make('password123'),
-                'role' => 'mentor',
-            ]
-        );
+        $mentorDepartments = [
+            'Mentor User' => 'web_developer',
+            'Android Mentor' => 'android_developer',
+            'iOS Mentor' => 'ios_developer',
+            'DevOps Mentor' => 'devops',
+            'AI Mentor' => 'ai_developer',
+            'BA Mentor' => 'business_analyst',
+            'Data Mentor' => 'data_analyst',
+        ];
+
+        foreach ($mentorDepartments as $name => $dept) {
+            $email = $name === 'Mentor User' ? 'mentor@example.com' : strtolower(str_replace(' ', '', $name)) . '@example.com';
+            User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'name' => $name,
+                    'password' => Hash::make('password123'),
+                    'role' => 'mentor',
+                    'department' => $dept,
+                ]
+            );
+        }
 
         User::firstOrCreate(
             ['email' => 'intern@example.com'],
@@ -37,10 +52,11 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Intern User',
                 'password' => Hash::make('password123'),
                 'role' => 'intern',
+                'department' => 'web_developer',
             ]
         );
 
-        User::factory(500)->create([
+        User::factory(50)->create([
             'role' => 'intern',
         ]);
     }

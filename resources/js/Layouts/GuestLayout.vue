@@ -8,8 +8,11 @@ import { Link } from '@inertiajs/vue3';
         class="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0"
     >
         <div>
-            <Link href="/">
-                <ApplicationLogo class="h-20 w-20 fill-current text-gray-500" />
+            <Link href="/" class="flex flex-col items-center gap-2.5 group">
+                <ApplicationLogo class="h-16 w-16 shadow-lg shadow-indigo-500/20 rounded-2xl transition-transform group-hover:scale-105" />
+                <span class="font-black text-2xl tracking-tight text-gray-900 group-hover:text-indigo-600 transition-colors">
+                    Skill<span class="text-indigo-600">Up</span>
+                </span>
             </Link>
         </div>
 

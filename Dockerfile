@@ -1,6 +1,3 @@
-# ==========================================
-# Stage 1: Build Frontend Assets (Vite & Vue)
-# ==========================================
 FROM node:20-alpine AS frontend
 WORKDIR /app
 
@@ -8,7 +5,7 @@ ARG VITE_REVERB_APP_KEY=ab12cd34ef56gh78ij90
 ARG VITE_REVERB_HOST=localhost
 ARG VITE_REVERB_PORT=8085
 ARG VITE_REVERB_SCHEME=http
-ARG VITE_APP_NAME=Laravel
+ARG VITE_APP_NAME=SkillUp
 
 ENV VITE_REVERB_APP_KEY=$VITE_REVERB_APP_KEY \
     VITE_REVERB_HOST=$VITE_REVERB_HOST \
@@ -44,12 +41,14 @@ RUN apk add --no-cache \
     libzip-dev \
     icu-dev \
     oniguruma-dev \
+    postgresql-dev \
     $PHPIZE_DEPS \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         pdo_mysql \
+        pdo_pgsql \
         mbstring \
         gd \
         zip \

@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: intern-mentor-app:latest
+    image: skillup-app:latest
     container_name: intern_mentor_app
     restart: unless-stopped
     ports:

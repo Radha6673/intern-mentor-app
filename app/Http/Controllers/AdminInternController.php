@@ -20,10 +20,11 @@ class AdminInternController extends Controller
      */
     public function index(): Response
     {
-        $interns = $this->userRepository->getUsersByRole(UserRole::INTERN->value, ['id', 'name', 'email', 'created_at']);
+        $interns = $this->userRepository->getUsersByRole(UserRole::INTERN->value, ['id', 'name', 'email', 'department', 'created_at']);
 
         return Inertia::render('Admin/Interns/Index', [
             'interns' => $interns,
+            'departments' => \App\Enums\Department::options(),
         ]);
     }
 
@@ -39,5 +40,19 @@ class AdminInternController extends Controller
         $this->userRepository->updateUserRole($user->id, UserRole::MENTOR->value);
 
         return back()->with('success', "Intern '{$user->name}' has been successfully promoted to Mentor! They can now log in as a Mentor.");
+    }
+
+    /**
+     * Update an intern's department.
+     */
+    public function updateDepartment(\Illuminate\Http\Request $request, User $user): RedirectResponse
+    {
+        $request->validate([
+            'department' => ['required', 'string', \Illuminate\Validation\Rule::in(\App\Enums\Department::values())],
+        ]);
+
+        $user->update(['department' => $request->department]);
+
+        return back()->with('success', "Department updated to '{$user->department_label}' for intern '{$user->name}'.");
     }
 }

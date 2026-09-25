@@ -24,7 +24,7 @@ class UserRepository implements UserRepositoryInterface
     {
         if ($currentUser->role === UserRole::ADMIN->value) {
             return User::where('id', '!=', $currentUser->id)
-                ->select(['id', 'name', 'email', 'role', 'created_at'])
+                ->select(['id', 'name', 'email', 'role', 'department', 'created_at'])
                 ->latest()
                 ->get();
         }
@@ -36,12 +36,12 @@ class UserRepository implements UserRepositoryInterface
         }
 
         return User::where('role', $targetRole)
-            ->select(['id', 'name', 'email', 'role', 'created_at'])
+            ->select(['id', 'name', 'email', 'role', 'department', 'created_at'])
             ->latest()
             ->get();
     }
 
-    public function getUsersByRole(string $role, array $columns = ['id', 'name', 'email']): Collection
+    public function getUsersByRole(string $role, array $columns = ['id', 'name', 'email', 'department']): Collection
     {
         return User::where('role', $role)->select($columns)->latest()->get();
     }

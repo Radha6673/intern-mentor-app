@@ -1,13 +1,14 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+const user = computed(() => usePage().props.auth.user);
 </script>
 
 <template>
@@ -20,21 +21,79 @@ const showingNavigationDropdown = ref(false);
                         <div class="flex">
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
-                                <Link :href="route('dashboard')">
+                                <Link :href="route('dashboard')" class="flex items-center gap-2.5 group">
                                     <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
+                                        class="block h-9 w-9 shadow-md shadow-indigo-500/20 rounded-xl transition-transform group-hover:scale-105"
                                     />
+                                    <span class="font-black text-xl tracking-tight text-gray-900 group-hover:text-indigo-600 transition-colors">
+                                        Skill<span class="text-indigo-600">Up</span>
+                                    </span>
                                 </Link>
                             </div>
 
                             <!-- Primary Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <div class="hidden space-x-6 sm:-my-px sm:ms-8 sm:flex items-center">
                                 <NavLink
                                     :href="route('dashboard')"
                                     :active="route().current('dashboard')"
                                 >
                                     Dashboard
                                 </NavLink>
+
+                                <!-- Admin Nav Links -->
+                                <template v-if="user?.role === 'admin'">
+                                    <NavLink
+                                        :href="route('admin.mentors.index')"
+                                        :active="route().current('admin.mentors.*')"
+                                    >
+                                        Mentors
+                                    </NavLink>
+                                    <NavLink
+                                        :href="route('members.index')"
+                                        :active="route().current('members.index')"
+                                    >
+                                        Directory
+                                    </NavLink>
+                                </template>
+
+                                <!-- Mentor Nav Links -->
+                                <template v-else-if="user?.role === 'mentor'">
+                                    <NavLink
+                                        :href="route('mentor.tasks.index')"
+                                        :active="route().current('mentor.tasks.index')"
+                                    >
+                                        Assign Tasks
+                                    </NavLink>
+                                    <NavLink
+                                        :href="route('mentor.tasks.history')"
+                                        :active="route().current('mentor.tasks.history')"
+                                    >
+                                        Submissions
+                                    </NavLink>
+                                    <NavLink
+                                        :href="route('mentor.interns.index')"
+                                        :active="route().current('mentor.interns.*')"
+                                    >
+                                        Interns & Reports
+                                    </NavLink>
+                                </template>
+
+                                <!-- Intern Nav Links -->
+                                <template v-else-if="user?.role === 'intern'">
+                                    <NavLink
+                                        :href="route('intern.tasks.index')"
+                                        :active="route().current('intern.tasks.*')"
+                                    >
+                                        My Tasks
+                                    </NavLink>
+                                    <NavLink
+                                        :href="route('members.index')"
+                                        :active="route().current('members.index')"
+                                    >
+                                        Mentors
+                                    </NavLink>
+                                </template>
+
                                 <NavLink
                                     :href="route('chat.index')"
                                     :active="route().current('chat.*')"
@@ -141,6 +200,61 @@ const showingNavigationDropdown = ref(false);
                         >
                             Dashboard
                         </ResponsiveNavLink>
+
+                        <!-- Admin Responsive Nav Links -->
+                        <template v-if="user?.role === 'admin'">
+                            <ResponsiveNavLink
+                                :href="route('admin.mentors.index')"
+                                :active="route().current('admin.mentors.*')"
+                            >
+                                Manage Mentors
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink
+                                :href="route('members.index')"
+                                :active="route().current('members.index')"
+                            >
+                                Members Directory
+                            </ResponsiveNavLink>
+                        </template>
+
+                        <!-- Mentor Responsive Nav Links -->
+                        <template v-else-if="user?.role === 'mentor'">
+                            <ResponsiveNavLink
+                                :href="route('mentor.tasks.index')"
+                                :active="route().current('mentor.tasks.index')"
+                            >
+                                Assign Tasks
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink
+                                :href="route('mentor.tasks.history')"
+                                :active="route().current('mentor.tasks.history')"
+                            >
+                                Submissions & History
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink
+                                :href="route('mentor.interns.index')"
+                                :active="route().current('mentor.interns.*')"
+                            >
+                                Interns & Reports
+                            </ResponsiveNavLink>
+                        </template>
+
+                        <!-- Intern Responsive Nav Links -->
+                        <template v-else-if="user?.role === 'intern'">
+                            <ResponsiveNavLink
+                                :href="route('intern.tasks.index')"
+                                :active="route().current('intern.tasks.*')"
+                            >
+                                My Tasks
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink
+                                :href="route('members.index')"
+                                :active="route().current('members.index')"
+                            >
+                                Mentors Directory
+                            </ResponsiveNavLink>
+                        </template>
+
                         <ResponsiveNavLink
                             :href="route('chat.index')"
                             :active="route().current('chat.*')"

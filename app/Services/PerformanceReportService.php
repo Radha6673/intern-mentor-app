@@ -14,8 +14,14 @@ class PerformanceReportService
      */
     public function generateTeamReport(): array
     {
-        $interns = User::where('role', UserRole::INTERN->value)->get();
-        $reports = $interns->map(fn($intern) => $this->generateSingleInternReport($intern));
+        $interns = User::where('role', UserRole::INTERN->value)
+            ->with(['myTasks' => function ($q) {
+                $q->with('mentor:id,name,email')->latest();
+            }])
+            ->latest()
+            ->get();
+
+        $reports = $interns->map(fn($intern) => $this->formatInternReport($intern, $intern->myTasks));
 
         $totalInterns = $reports->count();
         $avgCompletion = $totalInterns > 0 ? round($reports->avg('completion_rate_num'), 1) : 0;
@@ -37,11 +43,21 @@ class PerformanceReportService
      */
     public function generateSingleInternReport(User $intern): array
     {
-        $tasks = Task::where('intern_id', $intern->id)
-            ->with(['mentor:id,name,email'])
-            ->latest()
-            ->get();
+        $tasks = $intern->relationLoaded('myTasks')
+            ? $intern->myTasks
+            : Task::where('intern_id', $intern->id)
+                ->with(['mentor:id,name,email'])
+                ->latest()
+                ->get();
 
+        return $this->formatInternReport($intern, $tasks);
+    }
+
+    /**
+     * Format metrics and task collection into report structure.
+     */
+    protected function formatInternReport(User $intern, $tasks): array
+    {
         $totalTasks = $tasks->count();
         $approvedTasks = $tasks->where('status', TaskStatus::APPROVED->value)->count();
         $submittedTasks = $tasks->where('status', TaskStatus::SUBMITTED->value)->count();
@@ -76,7 +92,7 @@ class PerformanceReportService
                     'mentor_name' => $task->mentor ? $task->mentor->name : 'N/A',
                     'created_at' => $task->created_at ? $task->created_at->format('M d, Y') : 'N/A',
                 ];
-            }),
+            })->values(),
         ];
     }
 }

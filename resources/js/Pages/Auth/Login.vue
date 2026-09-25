@@ -185,6 +185,16 @@ const submit = () => {
                         <span>Sign in with Google</span>
                     </a>
                 </div>
+
+                <!-- Register Link -->
+                <div class="mt-6 text-center">
+                    <p class="text-xs text-gray-500">
+                        Don't have an account yet?
+                        <Link :href="route('register')" class="font-bold text-indigo-600 hover:text-indigo-500 ml-1 underline">
+                            Create an account
+                        </Link>
+                    </p>
+                </div>
             </form>
         </div>
     </GuestLayout>

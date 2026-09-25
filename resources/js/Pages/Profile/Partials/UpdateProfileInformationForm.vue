@@ -12,6 +12,10 @@ defineProps({
     status: {
         type: String,
     },
+    departments: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const user = usePage().props.auth.user;
@@ -19,6 +23,7 @@ const user = usePage().props.auth.user;
 const form = useForm({
     name: user.name,
     email: user.email,
+    department: user.department || '',
 });
 </script>
 
@@ -30,7 +35,7 @@ const form = useForm({
             </h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                Update your account's profile information and email address.
+                Update your account's profile information, department classification, and email address.
             </p>
         </header>
 
@@ -67,6 +72,23 @@ const form = useForm({
                 />
 
                 <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+
+            <div v-if="departments && departments.length > 0">
+                <InputLabel for="department" value="Department" />
+
+                <select
+                    id="department"
+                    v-model="form.department"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm font-medium"
+                >
+                    <option value="">-- No Department Assigned --</option>
+                    <option v-for="dept in departments" :key="dept.value" :value="dept.value">
+                        {{ dept.label }}
+                    </option>
+                </select>
+
+                <InputError class="mt-2" :message="form.errors.department" />
             </div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">

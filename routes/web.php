@@ -59,6 +59,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('/interns', [AdminInternController::class, 'index'])->name('interns.index');
     Route::post('/interns/{user}/promote', [AdminInternController::class, 'promote'])->name('interns.promote');
+    Route::patch('/interns/{user}/department', [AdminInternController::class, 'updateDepartment'])->name('interns.department');
 });
 
 require __DIR__ . '/auth.php';

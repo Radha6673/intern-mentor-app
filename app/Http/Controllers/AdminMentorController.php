@@ -23,10 +23,11 @@ class AdminMentorController extends Controller
      */
     public function index(): Response
     {
-        $mentors = $this->userRepository->getUsersByRole(UserRole::MENTOR->value, ['id', 'name', 'email', 'created_at']);
+        $mentors = $this->userRepository->getUsersByRole(UserRole::MENTOR->value, ['id', 'name', 'email', 'department', 'created_at']);
 
         return Inertia::render('Admin/Mentors/Index', [
             'mentors' => $mentors,
+            'departments' => \App\Enums\Department::options(),
         ]);
     }
 
@@ -38,12 +39,14 @@ class AdminMentorController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+            'department' => ['required', 'string', \Illuminate\Validation\Rule::in(\App\Enums\Department::values())],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $this->userRepository->createUser([
             'name' => $request->name,
             'email' => $request->email,
+            'department' => $request->department,
             'password' => Hash::make($request->password),
             'role' => UserRole::MENTOR->value,
         ]);

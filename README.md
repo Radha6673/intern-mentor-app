@@ -1,6 +1,6 @@
-# Intern-Mentor Application 🚀
+# SkillUp 🚀
 
-A modern, full-stack **Internship & Mentor Management Platform** built with **Laravel 12**, **Vue 3**, **Inertia.js**, and **Tailwind CSS**. It features real-time messaging powered by **Laravel Reverb**, AI-assisted task management powered by **Gemini AI**, and **Google OAuth** authentication via Laravel Socialite.
+**SkillUp** is a modern, full-stack **Internship & Mentor Management Platform** built with **Laravel 12**, **Vue 3**, **Inertia.js**, and **Tailwind CSS**. It features real-time messaging powered by **Laravel Reverb**, AI-assisted task management powered by **Gemini AI**, and **Google OAuth** authentication via Laravel Socialite.
 
 ---
 
