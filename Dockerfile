@@ -18,7 +18,6 @@ RUN npm install
 
 COPY resources ./resources
 COPY public ./public
-COPY vendor/tightenco/ziggy ./vendor/tightenco/ziggy
 COPY vite.config.js postcss.config.js tailwind.config.js jsconfig.json* ./
 RUN npm run build
 
