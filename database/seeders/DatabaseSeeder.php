@@ -13,13 +13,14 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        User::firstOrCreate(
+        User::updateOrCreate(
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Admin User',
                 'password' => Hash::make('password123'),
                 'role' => 'admin',
                 'department' => null,
+                'email_verified_at' => now(),
             ]
         );
 
@@ -35,26 +36,30 @@ class DatabaseSeeder extends Seeder
 
         foreach ($mentorDepartments as $name => $dept) {
             $email = $name === 'Mentor User' ? 'mentor@example.com' : strtolower(str_replace(' ', '', $name)) . '@example.com';
-            User::firstOrCreate(
+            User::updateOrCreate(
                 ['email' => $email],
                 [
                     'name' => $name,
                     'password' => Hash::make('password123'),
                     'role' => 'mentor',
                     'department' => $dept,
+                    'email_verified_at' => now(),
                 ]
             );
         }
 
-        User::firstOrCreate(
+        User::updateOrCreate(
             ['email' => 'intern@example.com'],
             [
                 'name' => 'Intern User',
                 'password' => Hash::make('password123'),
                 'role' => 'intern',
                 'department' => 'web_developer',
+                'email_verified_at' => now(),
             ]
         );
+
+        User::whereNull('email_verified_at')->update(['email_verified_at' => now()]);
 
         if (class_exists(\Faker\Factory::class)) {
             User::factory(50)->create([
