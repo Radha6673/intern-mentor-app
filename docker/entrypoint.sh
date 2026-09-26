@@ -37,11 +37,8 @@ if [ "$AUTO_MIGRATE" = "true" ] || [ -n "$DB_HOST" ] || [ -n "$DATABASE_URL" ] |
     echo "Running database migrations..."
     php artisan migrate --force || true
 
-    # Seed default roles/users if requested
-    if [ "$RUN_SEEDER" = "true" ]; then
-        echo "Running database seeders..."
-        php artisan db:seed --force || true
-    fi
+    echo "Ensuring seeded admin, mentors and verified status..."
+    php artisan db:seed --force || true
 fi
 
 # Re-apply permissions after artisan commands so www-data (php-fpm) can write logs & cache
