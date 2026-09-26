@@ -56,8 +56,10 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        User::factory(50)->create([
-            'role' => 'intern',
-        ]);
+        if (class_exists(\Faker\Factory::class)) {
+            User::factory(50)->create([
+                'role' => 'intern',
+            ]);
+        }
     }
 }
