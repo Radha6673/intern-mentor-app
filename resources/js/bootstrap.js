@@ -17,15 +17,17 @@ if (import.meta.env.VITE_REVERB_APP_KEY) {
         ? import.meta.env.VITE_REVERB_HOST
         : window.location.hostname;
 
-    const defaultPort = isLocalhost ? 8085 : (isHttps ? 443 : 80);
-    const port = import.meta.env.VITE_REVERB_PORT ? Number(import.meta.env.VITE_REVERB_PORT) : defaultPort;
+    // In production, always use standard port (443 / 80) because Render only exposes port 443 to the public
+    const port = isLocalhost
+        ? (import.meta.env.VITE_REVERB_PORT ? Number(import.meta.env.VITE_REVERB_PORT) : 8085)
+        : (isHttps ? 443 : 80);
 
     window.Echo = new Echo({
         broadcaster: 'reverb',
         key: import.meta.env.VITE_REVERB_APP_KEY,
         wsHost: host,
         wsPort: port,
-        wssPort: isHttps ? 443 : port,
+        wssPort: port,
         forceTLS: isHttps,
         enabledTransports: ['ws', 'wss'],
     });
