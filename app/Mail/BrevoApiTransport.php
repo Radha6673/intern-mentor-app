@@ -27,6 +27,7 @@ class BrevoApiTransport extends AbstractTransport
             ];
         }
 
+        $from = $email->getFrom()[0] ?? null;
         $fromName = ($from && $from->getName()) ? $from->getName() : config('mail.from.name', 'SkillUp');
         $fromEmail = ($from && $from->getAddress()) ? $from->getAddress() : config('mail.from.address');
 
