@@ -43,17 +43,17 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'role' => 'intern',
             'department' => 'web_developer',
-            'email_verified_at' => now(),
+            'email_verified_at' => null,
         ]);
 
         try {
             event(new Registered($user));
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Registration event warning: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::warning('Registration email event warning: ' . $e->getMessage());
         }
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('verification.notice');
     }
 }

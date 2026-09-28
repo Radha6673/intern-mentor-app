@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -86,5 +86,28 @@ class User extends Authenticatable
     public function conversations()
     {
         return $this->hasMany(Conversation::class, $this->role === 'mentor' ? 'mentor_id' : 'intern_id');
+    }
+
+    /**
+     * Determine if the user has verified their email address.
+     * Admin and Mentors (including dummy seed accounts) always bypass verification.
+     */
+    public function hasVerifiedEmail(): bool
+    {
+        if (in_array($this->role, ['admin', 'mentor'])) {
+            return true;
+        }
+
+        return ! is_null($this->email_verified_at);
+    }
+
+    /**
+     * Send the email verification notification using the background queue.
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        if (! $this->hasVerifiedEmail()) {
+            $this->notify(new \App\Notifications\QueuedVerifyEmail);
+        }
     }
 }
