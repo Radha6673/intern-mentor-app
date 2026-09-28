@@ -39,13 +39,18 @@ class RegisteredUserController extends Controller
 
         $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'email' => strtolower($request->email),
             'password' => Hash::make($request->password),
             'role' => 'intern',
             'department' => 'web_developer',
+            'email_verified_at' => now(),
         ]);
 
-        event(new Registered($user));
+        try {
+            event(new Registered($user));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Registration event warning: ' . $e->getMessage());
+        }
 
         Auth::login($user);
 
