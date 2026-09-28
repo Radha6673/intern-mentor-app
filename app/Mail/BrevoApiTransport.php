@@ -27,7 +27,13 @@ class BrevoApiTransport extends AbstractTransport
             ];
         }
 
-        $from = $email->getFrom()[0] ?? null;
+        $fromName = ($from && $from->getName()) ? $from->getName() : config('mail.from.name', 'SkillUp');
+        $fromEmail = ($from && $from->getAddress()) ? $from->getAddress() : config('mail.from.address');
+
+        $htmlBody = $email->getHtmlBody();
+        if (empty($htmlBody)) {
+            $htmlBody = nl2br($email->getTextBody() ?? 'SkillUp Notification');
+        }
 
         $response = Http::withHeaders([
             'api-key' => $this->apiKey,
@@ -35,12 +41,12 @@ class BrevoApiTransport extends AbstractTransport
             'Accept' => 'application/json',
         ])->timeout(15)->post('https://api.brevo.com/v3/smtp/email', [
             'sender' => [
-                'name' => $from ? $from->getName() : config('mail.from.name', 'SkillUp'),
-                'email' => $from ? $from->getAddress() : config('mail.from.address'),
+                'name' => $fromName,
+                'email' => $fromEmail,
             ],
             'to' => $to,
-            'subject' => $email->getSubject(),
-            'htmlContent' => $email->getHtmlBody() ?: nl2br($email->getTextBody() ?? ''),
+            'subject' => $email->getSubject() ?: 'Notification from SkillUp',
+            'htmlContent' => $htmlBody,
         ]);
 
         if (! $response->successful()) {

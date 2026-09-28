@@ -29,6 +29,12 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
+        config([
+            'mail.mailers.brevo-api' => [
+                'transport' => 'brevo-api',
+            ],
+        ]);
+
         Mail::extend('brevo-api', function (array $config = []) {
             return new BrevoApiTransport(
                 apiKey: (string) env('BREVO_API_KEY', env('MAIL_PASSWORD'))
