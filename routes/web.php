@@ -63,4 +63,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/interns/{user}', [AdminInternController::class, 'destroy'])->name('interns.destroy');
 });
 
+// Quick SMTP Diagnostic Route
+Route::get('/test-mail', function () {
+    try {
+        $to = request('to', config('mail.from.address'));
+        \Illuminate\Support\Facades\Mail::raw('SkillUp SMTP is working perfectly!', function ($message) use ($to) {
+            $message->to($to)->subject('SkillUp SMTP Test');
+        });
+        return "SUCCESS: Test email sent to {$to}! Please check your Inbox and Spam folder.";
+    } catch (\Throwable $e) {
+        return "ERROR: " . $e->getMessage();
+    }
+});
+
 require __DIR__ . '/auth.php';
