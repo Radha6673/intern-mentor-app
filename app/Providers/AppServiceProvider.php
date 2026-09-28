@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Mail\BrevoApiTransport;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -26,5 +28,11 @@ class AppServiceProvider extends ServiceProvider
         if (app()->environment('production') || str_contains((string) config('app.url'), 'https://')) {
             URL::forceScheme('https');
         }
+
+        Mail::extend('brevo-api', function (array $config = []) {
+            return new BrevoApiTransport(
+                apiKey: (string) env('BREVO_API_KEY', env('MAIL_PASSWORD'))
+            );
+        });
     }
 }
