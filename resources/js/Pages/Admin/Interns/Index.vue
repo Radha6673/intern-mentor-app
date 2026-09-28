@@ -77,6 +77,15 @@ const promoteToMentor = (intern) => {
     }
 };
 
+// Delete intern handler
+const deleteIntern = (intern) => {
+    if (confirm(`Are you sure you want to delete intern "${intern.name}" (${intern.email})?\n\nAll their tasks, submissions, and messages will also be permanently deleted.`)) {
+        router.delete(route('admin.interns.destroy', intern.id), {
+            preserveScroll: true,
+        });
+    }
+};
+
 const openPerformanceReport = async (internId = null) => {
     showReportModal.value = true;
     loadingReport.value = true;
@@ -274,6 +283,15 @@ const openPerformanceReport = async (internId = null) => {
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
                                                 </svg>
                                                 Promote
+                                            </button>
+                                            <button
+                                                @click="deleteIntern(intern)"
+                                                class="inline-flex items-center px-3 py-1.5 border border-rose-200 rounded-lg text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 transition shadow-sm active:scale-95 cursor-pointer"
+                                            >
+                                                <svg class="w-3.5 h-3.5 mr-1 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
+                                                Delete
                                             </button>
                                         </div>
                                     </td>

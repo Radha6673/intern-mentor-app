@@ -55,4 +55,18 @@ class AdminInternController extends Controller
 
         return back()->with('success', "Department updated to '{$user->department_label}' for intern '{$user->name}'.");
     }
+
+    /**
+     * Remove the specified intern from storage.
+     */
+    public function destroy(User $user): RedirectResponse
+    {
+        if ($user->role !== UserRole::INTERN->value) {
+            return back()->with('error', 'Only intern accounts can be deleted from this section.');
+        }
+
+        $this->userRepository->deleteUser($user->id);
+
+        return back()->with('success', "Intern '{$user->name}' deleted successfully.");
+    }
 }
